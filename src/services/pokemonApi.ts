@@ -1,14 +1,9 @@
 // src/services/pokemonApi.ts
 
-export type PokemonResult = {
-  name: string;
-  sprite: string | null;
-  types: string[];
-  abilities: string[];
-  moves: string[]; // first 5
-};
+import { PokemonBuilder} from "@/models/PokemonBuilder";
+import type { Pokemon } from "@/models/Pokemon";
 
-export async function fetchPokemonByName(name: string): Promise<PokemonResult> {
+export async function fetchPokemonByName(name: string): Promise<Pokemon> {
   const q = name.trim().toLowerCase();
 
   if (!q) {
@@ -27,23 +22,28 @@ export async function fetchPokemonByName(name: string): Promise<PokemonResult> {
 
   const data = await response.json();
 
-  // Transform raw API JSON into a Pokemon-shaped object your UI expects
-  const result: PokemonResult = {
-    name: data?.name ?? q,
-    sprite: data?.sprites?.front_default ?? null,
-    types: Array.isArray(data?.types)
-      ? data.types.map((t: any) => t?.type?.name).filter(Boolean)
-      : [],
-    abilities: Array.isArray(data?.abilities)
-      ? data.abilities.map((a: any) => a?.ability?.name).filter(Boolean)
-      : [],
-    moves: Array.isArray(data?.moves)
-      ? data.moves
-          .slice(0, 5)
-          .map((m: any) => m?.move?.name)
-          .filter(Boolean)
-      : [],
-  };
+  const types = Array.isArray(data?.types)
+    ? data.types.map((t: any) => t?.type?.name).filter(Boolean)
+    : [];
+  
+  const abilities = Array.isArray(data?.abilities)
+    ? data.abilities.map((a: any) => a?.ability?.name).filter(Boolean)
+    : [];
 
-  return result;
+  const moves = Array.isArray(data?.moves)
+    ? data.moves
+        .slice(0, 5) // Limit to first 5 moves for simplicity
+        .map((m: any) => m?.move?.name)
+        .filter(Boolean)
+    : [];
+
+  const image = data?.sprites?.front_default ?? null;
+
+  return new PokemonBuilder()
+    .setName(data?.name ?? q) // Fallback to query if name is missing
+    .setImage(image)
+    .setTypes(types)
+    .setAbilities(abilities)
+    .setMoves(moves)
+    .build();
 }

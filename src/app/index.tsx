@@ -1,4 +1,5 @@
-import { fetchPokemonByName, type PokemonResult } from "../services/pokemonApi";
+import { fetchPokemonByName } from "@/services/pokemonApi";
+import type { Pokemon } from "@/models/Pokemon";
 import { useState } from "react";
 import { Button, StyleSheet, Text, TextInput, View, Image, ActivityIndicator } from "react-native";
 
@@ -6,7 +7,7 @@ export default function HomeScreen() {
   const [pokemonName, setPokemonName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [pokemon, setPokemon] = useState<PokemonResult | null>(null);
+  const [pokemon, setPokemon] = useState<Pokemon | null>(null);
 
   async function handleSearch() {
   setLoading(true);
@@ -54,9 +55,9 @@ export default function HomeScreen() {
       {pokemon.name.toUpperCase()}
     </Text>
 
-    {pokemon.sprite ? (
+    {pokemon.image ? (
       <Image
-        source={{ uri: pokemon.sprite }}
+        source={{ uri: pokemon.image }}
         style={{ width: 140, height: 140, marginVertical: 10 }}
         resizeMode="contain"
       />

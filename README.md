@@ -32,3 +32,16 @@ I’d extract the API logic into a reusable function or custom hook and import i
 
 11.)If you wanted to test the API parsing logic, how would you do it right now?
 If I wanted to test the API Parsing logic, I would run the app, search  a pokemon name, inspect the logged JSON and confirm the UI shows the expected fields.
+
+12.)Why is it a win that the service doesn’t import React?
+Because it keeps the service portable and testable. The service becomes a plain TypeScript module with a stable interface.
+
+13.)What is the contract of the service function (inputs/outputs/errors)?
+The service function takes a Pokémon name string as input and returns a Promise containing the normalized Pokémon data. It either resolves with that data or throws an Error for invalid input, a failed request, or network/parse failures.
+
+
+14.)What does a builder pattern buy you here?
+A builder pattern gives you a clean, step-by-step way to construct a valid Pokemon object, and it keeps the transformation logic readable and easy to change without touching the UI.
+
+15.)In what way is a model safer than raw API JSON?
+A model is safer than raw API JSON because the model guarantees a consistent shape and types, so your UI isn’t relying on fragile, nested API fields that might be missing.
