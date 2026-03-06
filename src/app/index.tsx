@@ -1,3 +1,4 @@
+import { fetchPokemonByName, type PokemonResult } from "../services/pokemonApi";
 import { useState } from "react";
 import { Button, StyleSheet, Text, TextInput, View, Image, ActivityIndicator } from "react-native";
 
@@ -5,39 +6,23 @@ export default function HomeScreen() {
   const [pokemonName, setPokemonName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [pokemon, setPokemon] = useState<PokemonResult | null>(null);
 
-function handleSearch() {
-  const q = pokemonName.trim().toLowerCase();
-  console.log("Search pressed:", q);
+  async function handleSearch() {
+  setLoading(true);
+  setPokemon(null);
 
-  setError(""); // Clear any previous error messages
-
-  if (!q) { // If the input is empty, log a message and return early
-    console.log("Input a name");
-    return;
+  try {
+    const result = await fetchPokemonByName(pokemonName);
+    setPokemon(result);
+    setError("");
+    console.log("Pokemon result:\n", JSON.stringify(result, null, 2));
+  } catch (err: any) {
+    setError(err.message || "Something went wrong");
+  } finally {
+    setLoading(false);
   }
-  setLoading(true); // Set loading state to true to indicate that a search is in progress
-
-  fetch('https://pokeapi.co/api/v2/pokemon/' + q) // Makes a GET request to the PokeAPI with the specified Pokemon name
-    .then(response => {
-      if (!response.ok) {
-        throw new Error("Pokemon not found");
-      }
-      return response.json(); //Parses the JSON response into a JavaScript object
-    })
-    .then(data => {
-      setError(""); // Clear any previous error messages if the fetch is successful
-      console.log("Pokemon data:\n", JSON.stringify(data, null, 2));  // Logs the retrieved Pokemon data to the console in a formatted manner for better readability
-    })
-    .catch(error => {
-      console.error("Error fetching Pokemon data:", error.message); // Logs any errors that occur during the fetch operation to the console
-      setError(error.message); // Set the error state to display the error message to the user
-    })
-    .finally(() => {
-      setLoading(false); // Set loading state back to false after the fetch operation is complete, regardless of success or failure
-    });
 }
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Pokemon Search</Text>
@@ -63,6 +48,35 @@ function handleSearch() {
       {error ? ( // If there is an error message, display it to the user in red text
         <Text style={{ color: "red", marginTop: 12 }}>{error}</Text>
       ) : null}
+      {pokemon && (
+  <View style={{ marginTop: 16, alignItems: "center" }}>
+    <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+      {pokemon.name.toUpperCase()}
+    </Text>
+
+    {pokemon.sprite ? (
+      <Image
+        source={{ uri: pokemon.sprite }}
+        style={{ width: 140, height: 140, marginVertical: 10 }}
+        resizeMode="contain"
+      />
+    ) : (
+      <Text style={{ marginTop: 8 }}>No sprite available</Text>
+    )}
+
+    <Text style={{ marginTop: 6 }}>
+      Types: {pokemon.types.join(", ")}
+    </Text>
+
+    <Text style={{ marginTop: 6 }}>
+      Abilities: {pokemon.abilities.join(", ")}
+    </Text>
+
+    <Text style={{ marginTop: 6, textAlign: "center" }}>
+      First 5 moves: {pokemon.moves.join(", ")}
+    </Text>
+  </View>
+)}
     </View>
   );
 }
