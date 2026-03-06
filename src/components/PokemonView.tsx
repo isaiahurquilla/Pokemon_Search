@@ -1,5 +1,6 @@
 // src/components/PokemonView.tsx
 import type { Pokemon } from "@/models/Pokemon";
+import { useEffect, useRef } from "react";
 import {
   Button,
   StyleSheet,
@@ -9,6 +10,7 @@ import {
   Image,
   ActivityIndicator,
   Pressable,
+  Animated,
 } from "react-native";
 
 type Props = {
@@ -38,6 +40,35 @@ export default function PokemonView({
     onToggleFavorite,
     onLoadFavorite,
 }: Props) {
+
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const spinAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (!pokemon) return;
+    
+    fadeAnim.setValue(0);
+    spinAnim.setValue(0);
+
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 350,
+        useNativeDriver: true,
+      }),
+      Animated.timing(spinAnim, {
+        toValue: 1,
+        duration: 650,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [pokemon, fadeAnim, spinAnim]);
+
+  const rotate = spinAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "1080deg"],
+  });
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Pokemon Search</Text>
@@ -63,16 +94,22 @@ export default function PokemonView({
       {error ? <Text style={{ color: "red", marginTop: 12 }}>{error}</Text> : null}
 
       {pokemon && (
-        <View style={{ marginTop: 16, alignItems: "center" }}>
-          <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-            {pokemon.name.toUpperCase()}
-          </Text>
+        <Animated.View 
+        style={{ 
+          marginTop: 16, 
+          alignItems: "center", 
+          opacity: fadeAnim, 
+          }}
+          >
+            <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+              {pokemon.name.toUpperCase()}
+            </Text>
 
           <Button
             title={isFavorite ? "Unfavorite" : "Favorite"}
             onPress={onToggleFavorite}
           />
-
+        <Animated.View style={{ transform: [{ rotate }] }}>
           {pokemon.image ? (
             <Image
               source={{ uri: pokemon.image }}
@@ -82,7 +119,8 @@ export default function PokemonView({
           ) : (
             <Text style={{ marginTop: 8 }}>No sprite available</Text>
           )}
-
+        </Animated.View>
+        
           <Text style={{ marginTop: 6 }}>Types: {pokemon.types.join(", ")}</Text>
           <Text style={{ marginTop: 6 }}>
             Abilities: {pokemon.abilities.join(", ")}
@@ -90,7 +128,7 @@ export default function PokemonView({
           <Text style={{ marginTop: 6, textAlign: "center" }}>
             First 5 moves: {pokemon.moves.join(", ")}
           </Text>
-        </View>
+        </Animated.View>
       )}
 
       {/* Favorites list */}

@@ -72,3 +72,9 @@ Persistence is implemented as a service because it is an external side effect th
 
 23.)What is the difference between “state” and “persisted state”?
 State is the in-memory values used while the app is running. Persisted state is the version saved to disk so it can be restored after the app restarts.
+
+24.)Why does this animation belong in the view layer?
+This animation belongs in the view layer because animation is presentation/UI behavior. Keeping it in the view prevents controller/service from becoming UI dependent.
+
+25.)What triggers the animation and why?
+The trigger is pokemon changing from null to a real Pokemon object. That's when new results appear on screen, so resetting the animated values and starting the fade/spin there guarantees the animation plaus every time a new Pokemon loads.
