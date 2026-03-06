@@ -60,3 +60,15 @@ The controller is a better place for input validation because validation is beha
 
 19.)What would break if the view tried to call the API directly?
 If the view tried to all the API directly, then it'd break the seperation of concerns. This would force you to rewrite UI components instead of just updating the service/controller.
+
+20.)Why should favorites live in the controller and not the view?
+The favorites should live in the controller because favorites are state+behavior. 
+
+21.)What does “derived state” mean for isFavorite?
+This means that you don't store it seperately, you compute it from an existing state.
+
+22.)Why is persistence implemented as a service?
+Persistence is implemented as a service because it is an external side effect that should be reusable and isolated from UI logic so that you can swap AsyncStorage later without rewriting your controller/view
+
+23.)What is the difference between “state” and “persisted state”?
+State is the in-memory values used while the app is running. Persisted state is the version saved to disk so it can be restored after the app restarts.

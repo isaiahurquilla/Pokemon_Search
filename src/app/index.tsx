@@ -3,7 +3,17 @@ import { usePokemonController } from "@/controllers/usePokemonController";
 
 
 export default function HomeScreen() {
-  const { pokemonName, setPokemonName, pokemon, loading, error, search } =
+  const { 
+    pokemonName, 
+    setPokemonName, 
+    pokemon, 
+    loading, 
+    error, 
+    favorites,
+    isFavorite,
+    toggleFavorite,
+    loadFavorite,
+    search,} =
     usePokemonController();
 
   return (
@@ -14,6 +24,10 @@ export default function HomeScreen() {
       loading={loading}
       error={error}
       pokemon={pokemon}
+      favorites={favorites}
+      isFavorite={isFavorite}
+      onToggleFavorite={toggleFavorite}
+      onLoadFavorite={loadFavorite}
     />
   );
 }
