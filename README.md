@@ -77,4 +77,4 @@ State is the in-memory values used while the app is running. Persisted state is 
 This animation belongs in the view layer because animation is presentation/UI behavior. Keeping it in the view prevents controller/service from becoming UI dependent.
 
 25.)What triggers the animation and why?
-The trigger is pokemon changing from null to a real Pokemon object. That's when new results appear on screen, so resetting the animated values and starting the fade/spin there guarantees the animation plaus every time a new Pokemon loads.
+The trigger is pokemon changing from null to a real Pokemon object. That's when new results appear on screen, so resetting the animated values and starting the fade/spin there guarantees the animation plays every time a new Pokemon loads.
