@@ -45,3 +45,18 @@ A builder pattern gives you a clean, step-by-step way to construct a valid Pokem
 
 15.)In what way is a model safer than raw API JSON?
 A model is safer than raw API JSON because the model guarantees a consistent shape and types, so your UI isn’t relying on fragile, nested API fields that might be missing.
+
+16.)What responsibilities does the controller own?
+The Controller orchestrates the flow, owns UI-facing state, and exposes actions to the view
+
+17.)Why is the controller a better place for input validation than the view?
+The controller is a better place for input validation because validation is behavior/business logic. Keeping it in the controller makes it reusable, testable and keeps the view focused on display.
+
+18.)What props does the view need?
+    -The current input value (pokemonName)
+    -A way to update input (onChangePokemonName)
+    -A button action (onSearch)
+    -UI state to render (loading, error, pokemon)
+
+19.)What would break if the view tried to call the API directly?
+If the view tried to all the API directly, then it'd break the seperation of concerns. This would force you to rewrite UI components instead of just updating the service/controller.
